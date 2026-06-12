@@ -5,9 +5,9 @@ from oauth2client.service_account import ServiceAccountCredentials
 
 # 1. 비트겟 연결 설정
 exchange = ccxt.bitget({
-    'apiKey': '회원님의_비트겟_API_KEY',
-    'secret': '회원님의_비트겟_SECRET_KEY',
-    'password': '회원님의_API_PASSPHRASE',
+    'apiKey': 'bg_762dacee183de7cef0cea9c990ca85b0',
+    'secret': '24d9401cb2a9d20530004e1aadeaa0593d4b8d896c34b16ddc1e56131e6f9950',
+    'password': 'wjs907907',
     'enableRateLimit': True,
 })
 
