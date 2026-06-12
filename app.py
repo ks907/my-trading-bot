@@ -14,7 +14,11 @@ exchange = ccxt.bitget({
 })
 
 # 2. 구글 시트 연결 (Render 환경변수에서 JSON 내용 불러옴)
-scope = ["https://spreadsheets.google.com/feeds", 'https://www.googleapis.com/auth/spreadsheets']
+# app.py 상단의 scope를 이렇게 바꿔보세요
+scope = [
+    "https://www.googleapis.com/auth/spreadsheets",
+    "https://www.googleapis.com/auth/drive"
+]
 json_key_dict = json.loads(os.environ['GOOGLE_APPLICATION_CREDENTIALS_JSON'])
 creds = ServiceAccountCredentials.from_json_keyfile_dict(json_key_dict, scope)
 client = gspread.authorize(creds)
