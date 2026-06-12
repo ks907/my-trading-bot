@@ -1,30 +1,35 @@
-from flask import Flask, request, jsonify
+import time
+import gspread
 import ccxt
+from oauth2client.service_account import ServiceAccountCredentials
 
-app = Flask(__name__)
-
-# 비트겟 API 연결 (나중에 서버에서 설정할 비밀 값들입니다)
-import os
+# 1. 비트겟 연결 설정
 exchange = ccxt.bitget({
-    'apiKey': os.environ.get('BITGET_API_KEY'),
-    'secret': os.environ.get('BITGET_SECRET_KEY'),
-    'password': os.environ.get('BITGET_PASSPHRASE'),
+    'apiKey': '회원님의_비트겟_API_KEY',
+    'secret': '회원님의_비트겟_SECRET_KEY',
+    'password': '회원님의_API_PASSPHRASE',
     'enableRateLimit': True,
 })
 
-@app.route('/webhook', methods=['POST'])
-def webhook():
-    data = request.json
-    # 트레이딩뷰에서 보낸 신호대로 주문
-    symbol = data.get('symbol', 'BTC/USDT')
-    side = data.get('side') # 'buy' 또는 'sell'
-    
-    try:
-        # 시장가 매수 주문
-        order = exchange.create_market_order(symbol, side, amount=0.001)
-        return jsonify({"status": "success", "order": order}), 200
-    except Exception as e:
-        return jsonify({"status": "error", "message": str(e)}), 400
+# 2. 구글 시트 연결
+scope = ["https://spreadsheets.google.com/feeds", 'https://www.googleapis.com/auth/spreadsheets']
+creds = ServiceAccountCredentials.from_json_keyfile_name('credentials.json', scope)
+client = gspread.authorize(creds)
+sheet = client.open("Trading_Signal").sheet1
 
-if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000)
+print("봇이 시작되었습니다. 신호를 기다리는 중...")
+
+while True:
+    # 3. 시트 확인 (A2 셀)
+    cell_value = sheet.cell(2, 1).value
+    
+    if cell_value and "buy" in cell_value:
+        print("매수 신호 감지! 주문 실행 중...")
+        # 4. 비트겟 매수 주문
+        exchange.create_market_buy_order('BTC/USDT', 0.001) # 수량은 적절히 조정하세요
+        
+        # 5. 주문 후 셀 비우기 (중복 방지)
+        sheet.update_cell(2, 1, "")
+        print("주문 완료 및 시트 초기화.")
+        
+    time.sleep(5) # 5초마다 확인
