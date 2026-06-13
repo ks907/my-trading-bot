@@ -22,7 +22,7 @@ scope = [
 json_key_dict = json.loads(os.environ['GOOGLE_APPLICATION_CREDENTIALS_JSON'])
 creds = ServiceAccountCredentials.from_json_keyfile_dict(json_key_dict, scope)
 client = gspread.authorize(creds)
-sheet = client.open("Trading_Signal").sheet1
+sheet = client.open_by_url("https://docs.google.com/spreadsheets/d/11srfi3OC08qbqrU5IuMs5vFap_wWMiK5jeye9vxWGCk/edit?gid=0#gid=0").sheet1
 
 print("봇이 시작되었습니다. 신호를 기다리는 중...")
 
